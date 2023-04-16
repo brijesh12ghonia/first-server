@@ -1,0 +1,19 @@
+{
+  "name": "first-server",
+  "version": "1.0.0",
+  "description": "Created my first node.js server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brijesh987/first-server.git"
+  },
+  "author": "Brijesh Ghonia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brijesh987/first-server/issues"
+  },
+  "homepage": "https://github.com/brijesh987/first-server#readme"
+}
