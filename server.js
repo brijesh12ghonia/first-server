@@ -1,69 +1,44 @@
-const http = require('http');
+const express = require('express');
+
+const app = express();
+app.use(express.json());
+
 const port = 8081;
 
 const toDoList = ["Read Books", "Play Cricket"];
 
-http.createServer((request, response) => {
-    const { method, url } = request;
+app.get("/todos", (req, res) => {
+    res.status(200).send(toDoList);
+});
 
-    if (url == "/todos") {
-        if (method == "GET") {
-            response.writeHead(200, { "content-type": "text/html" });
-            response.write(toDoList.toString());
+app.post("/todos", (req, res) => {
+    let newToDoList = req.body.item;
+    toDoList.push(newToDoList);
+    res.status(201).send({
+        message: `Successfully added '${newToDoList}' to the list`
+    });
+});
+
+app.delete("/todos", (req, res) => {
+    const deleteItem = req.body.item;
+    toDoList.find((element, index) => {
+        if (element === deleteItem) {
+            toDoList.splice(index, 1);
         }
+    });
+    res.status(202).send({
+        message: `Deleted item '${req.body.item}'`
+    });
+});
 
-        else if (method == "POST") {
-            let body = '';
-            request.on('error', (err) => {
-                console.error(err);
-            }).on('data', (frag) => {
-                body += frag;
-            }).on('end', () => {
-                body = JSON.parse(body);
-                let newToDo = toDoList;
-                newToDo.push(body.item);
-                console.log(newToDo);
-                response.writeHead(201);
-            })
-        }
+app.all("/todos", (req, res) => {
+    res.status(501).send();
+});
 
-        else if (method == "DELETE") {
-            let body = '';
-            request.on('error', (err) => {
-                console.error(err);
-            }).on('data', (frag) => {
-                body += frag;
-            }).on('end', () => {
-                body = JSON.parse(body);
-                let deleteitem = body.item;
-                // for (let i = 0; i < toDoList.length; i++) {
-                //     if (toDoList[i] === deleteitem) {
-                //         toDoList.splice(i, 1);
-                //         break;
-                //     }
-                // }
+app.all('*', (req, res) => {
+   res.status(404).send(); 
+});
 
-                toDoList.find((element, index) => {
-                    if (element === deleteitem) {
-                        toDoList.splice(index, 1);
-                    }
-                });
-
-                response.writeHead(204);
-            });
-        }
-
-        else {
-            response.writeHead(404);
-        }
-    }
-
-    else {
-        response.writeHead(404);
-    }
-
-    response.end();
-
-}).listen(port, () => {
+app.listen(port, () => {
     console.log(`NodeJS listening on port ${port}`);
 });
